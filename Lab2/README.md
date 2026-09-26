@@ -1,12 +1,6 @@
 
 # Lab Worksheet 2 — Introduction to Database
 
-## Course Information
-- **Course:** IT 321
-- **Week:** 4
-- **Topic:** Introduction to Database
-- **Main Technology:** SQL and JDBC
-
 ## Purpose
 The purpose of this lab is to apply database concepts such as:
 - Creating databases and tables
