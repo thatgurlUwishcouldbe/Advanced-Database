@@ -73,3 +73,31 @@ Relation: department
   Attribute: dept_name | Type: varchar
   Attribute: building | Type: varchar
   Attribute: budget | Type: numeric
+
+Java and Neon Connection
+The Java program connects to the Neon PostgreSQL database using JDBC.
+Required Maven dependency:
+
+<dependency>
+    <groupId>org.postgresql</groupId>
+    <artifactId>postgresql</artifactId>
+    <version>42.7.4</version>
+</dependency>
+
+The main Java class is:
+database.University
+
+Run the project using:mvn clean compile
+mvn exec:java -Dexec.mainClass=database.University
+
+Security
+Database passwords should not be uploaded to GitHub.
+For a real project, use environment variables instead of writing the password directly in the Java source code.
+Technologies
+- Java
+- PostgreSQL
+- Neon
+- JDBC
+- Maven
+- Visual Studio Code
+
