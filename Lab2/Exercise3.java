@@ -3,103 +3,54 @@
 -- that prints a list of all relations in the database.
 -- For each relation, display the names and types of its attributes.
 
-    package database;
+package database;
 
 import java.sql.*;
 
 public class University {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        // استدعاء الداتابيس
 
-        String url =
-            "jdbc:postgresql://ep-lively-bonus-b40shv7a-pooler.c-6.us-east-2.aws.neon.tech:5432/university?sslmode=require";
+        try (Connection conn = DriverManager.getConnection(
+            "jdbc:postgresql://ep-lively-bonus-b40shv7a-pooler.c-6.us-east-2.aws.neon.tech:5432/university?sslmode=require"
+            ,"neondb_owner"
+            ,"npg_XVgudZTcCE07")) {
 
-        String username = "neondb_owner";
-        String password = "PASSWORD";
+            // System.out.println("Connected successfully!");
 
-        Connection conn =
-            DriverManager.getConnection(url, username, password);
+            // الميثود اللي انا سويت
+            printDatabaseMetadata(conn);
 
-        System.out.println("Connected successfully!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void printDatabaseMetadata(Connection conn) throws SQLException {
 
         DatabaseMetaData metadata = conn.getMetaData();
 
-        ResultSet tables = metadata.getTables(
-            null,
-            "public",
-            "%",
-            new String[]{"TABLE"}
-        );
+        try (ResultSet tables = metadata.getTables(null, "public", "%", new String[] { "TABLE" })) {
 
-        while (tables.next()) {
+            while (tables.next()) {
 
-            String tableName =
-                tables.getString("TABLE_NAME");
+                String tableName = tables.getString("TABLE_NAME");
 
-            System.out.println("\nRelation: " + tableName);
+                System.out.println("Relation: " + tableName);
 
-            ResultSet columns = metadata.getColumns(
-                null,
-                "public",
-                tableName,
-                "%"
-            );
+                try (ResultSet columns = metadata.getColumns(null, "public", tableName, "%")) {
 
-            while (columns.next()) {
+                    while (columns.next()) {
 
-                String columnName =
-                    columns.getString("COLUMN_NAME");
+                        String columnName = columns.getString("COLUMN_NAME");
 
-                String columnType =
-                    columns.getString("TYPE_NAME");
+                        String columnType = columns.getString("TYPE_NAME");
 
-                System.out.println(
-                    "  Attribute: " + columnName +
-                    " | Type: " + columnType
-                );
-            }
-
-            columns.close();
-
-            System.out.println("  Data:");
-
-            Statement statement = conn.createStatement();
-
-            ResultSet data = statement.executeQuery(
-                "SELECT * FROM public.\"" +
-                tableName.replace("\"", "\"\"") +
-                "\""
-            );
-
-            ResultSetMetaData dataMetadata =
-                data.getMetaData();
-
-            int columnCount =
-                dataMetadata.getColumnCount();
-
-            while (data.next()) {
-
-                for (int i = 1; i <= columnCount; i++) {
-
-                    System.out.print(
-                        dataMetadata.getColumnName(i) +
-                        "=" +
-                        data.getObject(i)
-                    );
-
-                    if (i < columnCount) {
-                        System.out.print(" | ");
+                        System.out.println("  Attribute: " + columnName + " | Type: " + columnType);
                     }
                 }
 
                 System.out.println();
             }
-
-            data.close();
-            statement.close();
         }
-
-        tables.close();
-        conn.close();
-    }
-}
